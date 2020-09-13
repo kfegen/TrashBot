@@ -88,5 +88,5 @@ async def on_ready():
 youtube.bot = bot
 youtube.bot.add_cog(youtube.Music(bot))
 
-youtube.bot.run('NzU0NTAxMjg5NTM0MDI5ODU1.X11qFQ.wLxmz8BPmhN-ak3hSXyt9viT374')  # Where 'TOKEN' is your bot token
+youtube.bot.run('')  # Where 'TOKEN' is your bot token
 
