@@ -59,7 +59,6 @@ class Music(commands.Cog):
     async def joinDefault(self, ctx):
         """Joins a voice channel"""
         if ctx.voice_client is None:
-            print(1)
             channel = discord.utils.get(ctx.message.guild.channels, name="Test", type="ChannelType.voice")
             print(channel)
             if channel is None:
@@ -74,10 +73,11 @@ class Music(commands.Cog):
         """Joins a voice channel"""
 
         if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
+            await ctx.voice_client.move_to(channel)
 
         await ctx.message.delete()
         await channel.connect()
+        await self.hi(ctx)
 
     @commands.command()
     async def play(self, ctx, *, query):
@@ -90,33 +90,35 @@ class Music(commands.Cog):
 
     @commands.command()
     async def yt(self, ctx, *, url):
-        """Plays from a url (almost anything youtube_dl supports)"""
+        try:
+            """Plays from a url (almost anything youtube_dl supports)"""
 
-        self.joinDefault(ctx)
+            self.joinDefault(ctx)
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+            async with ctx.typing():
+                player = await YTDLSource.from_url(url, loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
-            await ctx.message.delete()
-
-        await ctx.send('Now playing: {}'.format(player.title))
-
-    @commands.command()
-    async def whosplayingbot(self, ctx):
-        await ctx.send("Logan")
+                await ctx.message.delete()
+                await ctx.send('Now playing: {}'.format(player.title))
+        except:
+            print("An exception occurred")
 
     @commands.command()
     async def stream(self, ctx, *, url):
-        """Streams from a url (same as yt, but doesn't predownload)"""
-        self.joinDefault(ctx)
+        try:
+            """Streams from a url (same as yt, but doesn't predownload)"""
+            self.joinDefault(ctx)
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-            await ctx.message.delete()
+            async with ctx.typing():
+                player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+                await ctx.message.delete()
 
-        await ctx.send('Now playing: {}'.format(player.title))
+            await ctx.send('Now playing: {}'.format(player.title))
+        except:
+            print("An exception occurred")
+        
 
     @commands.command()
     async def volume(self, ctx, volume: int):
@@ -136,47 +138,50 @@ class Music(commands.Cog):
 
     @commands.command()
     async def bruh(self, ctx):
-        isalreadyConnected = True
-        if ctx.voice_client is None: 
-            isalreadyConnected = False
-        self.joinDefault(ctx)
+        try:
+            self.joinDefault(ctx)
+            async with ctx.typing():
+                player = await YTDLSource.from_url("https://www.youtube.com/watch?v=2ZIpFytCSVc", loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url("https://www.youtube.com/watch?v=2ZIpFytCSVc", loop=self.bot.loop)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+                await ctx.message.delete()
 
-            await ctx.message.delete()
-
-        await ctx.send("<:bruh:596482799280848896>")
-        if isalreadyConnected == False:
-            await ctx.voice_client.disconnect()
+                await ctx.send("<:bruh:596482799280848896>")
+        except:
+            print("An exception occurred")
+        
     
     @commands.command()
     async def bruhs(self, ctx):
-        self.joinDefault(ctx)
+        try:
+            self.joinDefault(ctx)
+            async with ctx.typing():
+                player = await YTDLSource.from_url("https://www.youtube.com/watch?v=2ZIpFytCSVc", loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url("https://www.youtube.com/watch?v=2ZIpFytCSVc", loop=self.bot.loop)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-
-            await ctx.message.delete()
-
-        await ctx.voice_client.disconnect()
+                await ctx.message.delete()
+        except:
+            print("An exception occurred")
 
     @commands.command(pass_context=True)
-    async def queue(self, ctx, *, url):
-        self.joinDefault(ctx)
+    async def hi(self, ctx):
+        try:
+            self.joinDefault(ctx)
+            async with ctx.typing():
+                player = await YTDLSource.from_url("https://sound.peal.io/ps/audios/000/007/769/original/youtube_7769.mp3?1517524109", loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        except:
+            print("An exception occurred")
 
-        async with ctx.typing():
-            globals.streamQ.append(url)
-            player = ctx.voice_client.create_ytdl_player(str(await globals.streamQ.get()), before_options=options)
-            await ctx.message.delete()
-
-            player.start()
-            while not player.is_done():
-                await asyncio.sleep(1)
-
-        await ctx.send('Now playing: {}'.format(player.title))
+    @commands.command()
+    async def whoisit(self, ctx):
+        """Plays a file from the local filesystem"""
+        try:
+            source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("C:\\Users\\keval\\OneDrive\\Desktop\\DiscBot\\Hello who is it.mp3"))
+            ctx.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
+        except:
+            print("An exception occurred")
+        await ctx.message.delete()
 
     @play.before_invoke
     @yt.before_invoke

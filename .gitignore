@@ -1,0 +1,5 @@
+/ffmpeg
+/ffmpeg/**
+
+/__pycache__
+/__pycache__/**
